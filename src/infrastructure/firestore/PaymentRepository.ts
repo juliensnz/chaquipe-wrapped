@@ -2,24 +2,35 @@ import {Payment} from '@/domain/model/Payment';
 import {Either, Result} from '@/domain/model/Result';
 import {RuntimeError} from '@/domain/model/RuntimeError';
 import {firebaseApp} from '@/lib/firebase';
-import {getFirestore, Firestore, query, collection, where, getDocs} from 'firebase/firestore';
+import {getFirestore, Firestore} from 'firebase/firestore';
+import {promises as fs} from 'fs';
 
 const db = getFirestore(firebaseApp);
 
 const paymentRepositoryCreator = ({db}: {db: Firestore}) => ({
   findAllByClient: async (client: string): Promise<Either<Payment[], RuntimeError>> => {
-    try {
-      const q = query(collection(db, 'payments'), where('client.id', '==', client));
-      const snapshot = await getDocs(q);
+    const file = await fs.readFile(process.cwd() + '/src/infrastructure/firestore/data.json', 'utf8');
 
-      return Result.Ok(snapshot.docs.map(doc => doc.data() as Payment));
-    } catch (error) {
-      return Result.Error({
-        type: 'payment_repository.get_query',
-        message: 'Error query payments',
-        payload: {error},
-      });
-    }
+    return Result.Ok(
+      (Object.values(JSON.parse(file).payments) as Payment[])
+        .filter((payment: Payment) => payment.client.id === client && payment.time > 1672527600000)
+        .sort((a, b) => a.time - b.time)
+    );
+    // try {
+    //   const q = query(
+    //     collection(db, 'payments'),
+    //     and(where('client.id', '==', client), where('time', '>', 1672527600000))
+    //   );
+    //   const snapshot = await getDocs(q);
+    //   return Result.Ok(snapshot.docs.map(doc => doc.data() as Payment));
+    // } catch (error) {
+    //   console.log(error);
+    //   return Result.Error({
+    //     type: 'payment_repository.get_query',
+    //     message: 'Error query payments',
+    //     payload: {error},
+    //   });
+    // }
   },
 });
 

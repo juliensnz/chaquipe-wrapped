@@ -1,5 +1,6 @@
 type Payment = {
   canceled: boolean;
+  amount: number;
   client: {
     avatar: string;
     id: string;
@@ -9,14 +10,6 @@ type Payment = {
     purchases: number;
   };
   id: string;
-  item: {
-    enabled: boolean;
-    name: string;
-    order: number;
-    picture: string;
-    price: number;
-    volume: number;
-  };
   time: number;
 };
 
