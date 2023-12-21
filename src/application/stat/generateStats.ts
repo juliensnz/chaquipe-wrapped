@@ -1,7 +1,10 @@
+import {Client} from '@/domain/model/Client';
+import {Payment} from '@/domain/model/Payment';
 import {Purchase} from '@/domain/model/Purchase';
 import {Either, Result} from '@/domain/model/Result';
 import {RuntimeError} from '@/domain/model/RuntimeError';
 import {UserStats} from '@/domain/model/UserStats';
+import {clientRepository} from '@/infrastructure/firestore/ClientRepository';
 import {paymentRepository} from '@/infrastructure/firestore/PaymentRepository';
 import {purchaseRepository} from '@/infrastructure/firestore/PurchaseRepository';
 
@@ -55,10 +58,14 @@ const getNumberOfRounds = (purchases: Purchase[]): {rounds: number; drinks: numb
   return {rounds: offeredRounds.length, drinks: offeredDrinks, biggestRound};
 };
 
-const generateStats = async (clientId: string): Promise<Either<UserStats, RuntimeError>> => {
-  const paymentsResult = await paymentRepository.findAllByClient(clientId as string);
-  const purchasesResult = await purchaseRepository.findAllByClient(clientId as string);
+const generateAllStats = async (): Promise<Either<Record<string, UserStats>, RuntimeError>> => {
+  const paymentsResult = await paymentRepository.findAll();
+  const purchasesResult = await purchaseRepository.findAll();
+  const clientsResult = await clientRepository.findAll();
 
+  if (clientsResult.isError()) {
+    return Result.Error(clientsResult.getError());
+  }
   if (paymentsResult.isError()) {
     return Result.Error(paymentsResult.getError());
   }
@@ -68,13 +75,27 @@ const generateStats = async (clientId: string): Promise<Either<UserStats, Runtim
 
   const purchases = purchasesResult.get();
   const payments = paymentsResult.get();
+  const clients = clientsResult.get();
 
+  return Result.Ok(
+    Object.fromEntries(
+      clients
+        .map(client => [
+          client.id,
+          generateUserStats(
+            purchases.filter(purchase => purchase.client.id === client.id),
+            payments.filter(payment => payment.client.id === client.id),
+            client
+          ),
+        ])
+        .filter(([, stats]) => stats !== null)
+    )
+  );
+};
+
+const generateUserStats = (purchases: Purchase[], payments: Payment[], client: Client): UserStats | null => {
   if (purchases.length === 0) {
-    return Result.Error({
-      type: 'stats.no_purchase',
-      message: 'No purchase found',
-      payload: {clientId},
-    });
+    return null;
   }
 
   const firstDate = new Date(purchases[0].time).toLocaleDateString('fr-FR');
@@ -155,7 +176,7 @@ const generateStats = async (clientId: string): Promise<Either<UserStats, Runtim
   const totalPaid = payments.reduce((total, payment) => total + payment.amount, 0);
   const totalRounds = getNumberOfRounds(purchases);
 
-  return Result.Ok({
+  return {
     totalPaid,
     totalVolume,
     longestNight,
@@ -163,7 +184,7 @@ const generateStats = async (clientId: string): Promise<Either<UserStats, Runtim
     latestNight,
     totalTimeSpent,
     totalRounds,
-  });
+  };
 };
 
-export {generateStats};
+export {generateAllStats};

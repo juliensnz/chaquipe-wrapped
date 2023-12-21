@@ -15,21 +15,13 @@ const paymentRepositoryCreator = ({db}: {db: Firestore}) => ({
         .filter((payment: Payment) => payment.client.id === client && payment.time > 1672527600000)
         .sort((a, b) => a.time - b.time)
     );
-    // try {
-    //   const q = query(
-    //     collection(db, 'payments'),
-    //     and(where('client.id', '==', client), where('time', '>', 1672527600000))
-    //   );
-    //   const snapshot = await getDocs(q);
-    //   return Result.Ok(snapshot.docs.map(doc => doc.data() as Payment));
-    // } catch (error) {
-    //   console.log(error);
-    //   return Result.Error({
-    //     type: 'payment_repository.get_query',
-    //     message: 'Error query payments',
-    //     payload: {error},
-    //   });
-    // }
+  },
+  findAll: async (): Promise<Either<Payment[], RuntimeError>> => {
+    return Result.Ok(
+      (Object.values(JSON.parse(file).payments) as Payment[])
+        .filter((payment: Payment) => payment.time > 1672527600000)
+        .sort((a, b) => a.time - b.time)
+    );
   },
 });
 

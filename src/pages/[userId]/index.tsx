@@ -1,5 +1,5 @@
 import {Story} from '@/components/common/Story';
-import {generateStats} from '@/application/stat/generateStats';
+import {generateAllStats} from '@/application/stat/generateStats';
 import {UserStats} from '@/domain/model/UserStats';
 import {clientRepository} from '@/infrastructure/firestore/ClientRepository';
 import {GetStaticPaths, GetStaticPropsContext} from 'next';
@@ -16,17 +16,31 @@ const Page = ({stats}: PageProps) => {
 
 export default Page;
 
-export async function getStaticProps(context: GetStaticPropsContext) {
-  const statsResult = await generateStats(context.params?.userId as string ?? '');
+let allStats: Record<string, UserStats> | undefined = undefined;
 
-  if (statsResult.isError()) {
+export async function getStaticProps(context: GetStaticPropsContext) {
+  if (allStats === undefined) {
+    const allStatsResult = await generateAllStats();
+
+    if (allStatsResult.isError()) {
+      return {
+        props: {}
+      }
+    }
+
+    allStats = allStatsResult.get();
+  }
+
+  const userStats = allStats[context.params?.userId as string ?? ''];
+
+  if (userStats === undefined) {
     return {
       props: {}
     }
   }
 
   return {
-    props: {stats: statsResult.get()}
+    props: {stats: userStats}
   }
 }
 

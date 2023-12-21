@@ -9,6 +9,13 @@ const db = getFirestore(firebaseApp);
 const file = await fs.readFile(process.cwd() + '/src/infrastructure/firestore/data.json', 'utf8');
 
 const purchaseRepositoryCreator = ({db}: {db: Firestore}) => ({
+  findAll: async (): Promise<Either<Purchase[], RuntimeError>> => {
+    return Result.Ok(
+      (Object.values(JSON.parse(file).purchases) as Purchase[])
+        .filter((purchase: Purchase) => purchase.time > 1672527600000)
+        .sort((a, b) => a.time - b.time)
+    );
+  },
   findAllByClient: async (client: string): Promise<Either<Purchase[], RuntimeError>> => {
     // return Result.Ok([
     //   {
@@ -140,23 +147,6 @@ const purchaseRepositoryCreator = ({db}: {db: Firestore}) => ({
     //     time: 1689090000_000, //17h40
     //   },
     // ]);
-
-    // try {
-    //   const q = query(
-    //     collection(db, 'purchases'),
-    //     and(where('client.id', '==', client), where('time', '>', 1672527600000))
-    //   );
-    //   const snapshot = await getDocs(q);
-
-    //   return Result.Ok(snapshot.docs.map(doc => doc.data() as Purchase));
-    // } catch (error) {
-    //   console.log(error);
-    //   return Result.Error({
-    //     type: 'purchase_repository.get_query',
-    //     message: 'Error query purchases',
-    //     payload: {error},
-    //   });
-    // }
 
     return Result.Ok(
       (Object.values(JSON.parse(file).purchases) as Purchase[])
