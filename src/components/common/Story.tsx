@@ -1,4 +1,5 @@
 import {Card} from '@/components/common/Card';
+import {Generosity} from '@/components/common/Card/Generosity';
 import {LatestNight} from '@/components/common/Card/LatestNight';
 import {useCardIndex} from '@/components/hooks/useCardIndex';
 import {UserStats} from '@/domain/model/UserStats';
@@ -40,7 +41,7 @@ type StoryProps = {stats: UserStats};
 const Story = ({stats}: StoryProps) => {
   const cards = [
     <LatestNight key="latestNight" {...stats.latestNight} totalTimeSpent={stats.totalTimeSpent} />,
-    1,
+    <Generosity key="generosity" {...stats.totalRounds} />,
     2,
     3,
     4,

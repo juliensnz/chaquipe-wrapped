@@ -6,6 +6,7 @@ import {getFirestore, Firestore} from 'firebase/firestore';
 import {promises as fs} from 'fs';
 
 const db = getFirestore(firebaseApp);
+const file = await fs.readFile(process.cwd() + '/src/infrastructure/firestore/data.json', 'utf8');
 
 const purchaseRepositoryCreator = ({db}: {db: Firestore}) => ({
   findAllByClient: async (client: string): Promise<Either<Purchase[], RuntimeError>> => {
@@ -156,7 +157,6 @@ const purchaseRepositoryCreator = ({db}: {db: Firestore}) => ({
     //     payload: {error},
     //   });
     // }
-    const file = await fs.readFile(process.cwd() + '/src/infrastructure/firestore/data.json', 'utf8');
 
     return Result.Ok(
       (Object.values(JSON.parse(file).purchases) as Purchase[])
