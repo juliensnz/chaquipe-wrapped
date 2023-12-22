@@ -24,7 +24,7 @@ const Container = styled.div`
   max-width: 500px;
   max-height: 1000px;
   width: 100vw;
-  height: 100vh;
+  height: 100svh;
   position: relative;
   border-radius: 10px;
   overflow: hidden;
