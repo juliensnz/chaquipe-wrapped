@@ -1,15 +1,7 @@
 import {UserStats} from '@/domain/model/UserStats';
 import styled from 'styled-components';
 import {getDayOfTheWeekAsString} from '@/domain/model/utils';
-import {Title} from '@/components/common/Card/common';
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  height: 100%;
-  width: 100%;
-`;
+import {Container, Title} from '@/components/common/Card/common';
 
 const Data = styled.div`
   font-size: 20px;
@@ -35,6 +27,7 @@ const Day = styled.div`
   justify-content: space-around;
   margin-bottom: 20px;
   align-items: flex-end;
+  width: 100%;
 `;
 
 const Punch = styled.div`
