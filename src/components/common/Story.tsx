@@ -6,6 +6,7 @@ import {UserStats} from '@/domain/model/UserStats';
 import styled from 'styled-components';
 import {DaysOfTheWeek} from './Card/DaysOfTheWeek';
 import {Consumption} from './Card/Consumption';
+import {Welcome} from './Card/Welcome';
 
 const Center = styled.div`
   width: 100vw;
@@ -42,6 +43,7 @@ type StoryProps = {stats: UserStats};
 
 const Story = ({stats}: StoryProps) => {
   const cards = [
+    <Welcome key="welcome" {...stats.client}/>,
     <DaysOfTheWeek key="daysOfTheWeek" {...stats.visits}/>,
     <LatestNight key="latestNight" {...stats.latestNight} totalTimeSpent={stats.totalTimeSpent} />,
     <Consumption key="consumption" {...stats.personnalConsumption}/>,

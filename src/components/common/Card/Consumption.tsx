@@ -58,7 +58,7 @@ const Big = styled.div`
 const Consumption = ({drinksPerHour,numberOfDrinks, numberOfRequiredAnts}: UserStats['personnalConsumption']) => {
   return (
     <Container>
-      <Title>{"We're all here for the same thing ! 🍻"}</Title>
+      <Title>{"We're all here for the same thing... 🍻"}</Title>
       <Data>
         <Day>
           <div>

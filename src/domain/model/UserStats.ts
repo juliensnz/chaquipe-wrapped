@@ -1,4 +1,7 @@
+import {Client} from './Client';
+
 type UserStats = {
+  client: Client;
   totalPaid: number;
   totalVolume: number;
   longestNight: {timeSpent: number; date: string};

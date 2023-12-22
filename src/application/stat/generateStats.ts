@@ -224,6 +224,7 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
   };
 
   return {
+    client,
     totalPaid,
     totalVolume,
     longestNight,

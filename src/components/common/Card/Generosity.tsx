@@ -58,7 +58,7 @@ const Big = styled.div`
 const Generosity = ({offeredRounds, drinks, biggestRound}: UserStats['rounds']) => {
   return (
     <Container>
-      <Title>{"It's always more fun together 👯‍♂️"}</Title>
+      <Title>{"... And it's always more fun together ! 👯‍♂️"}</Title>
       <Data>
         <Day>
           <div>
