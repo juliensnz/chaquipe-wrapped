@@ -6,6 +6,7 @@ const Container = styled.div`
   flex-direction: column;
   padding: 20px;
   height: 100%;
+  width: 100%;
 `;
 
 const Title = styled.div`
@@ -63,11 +64,11 @@ const LatestNight = ({date, leftAt, totalTimeSpent}: UserStats['latestNight'] & 
         <Day>
           <div>
             <SurTitle>It was the</SurTitle>
-            <Figure>{date.slice(0, 5)}</Figure>
+            <Figure>{date.split('/').slice(0, 2).join('/')}</Figure>
           </div>
           <div>
             <SurTitle>You left at</SurTitle>
-            <Figure>{new Date(leftAt).toLocaleTimeString().slice(0, 4)}</Figure>
+            <Figure>{new Date(leftAt).toLocaleTimeString().split(':').slice(0, 2).join(':')}</Figure>
           </div>
         </Day>
         <Punch>

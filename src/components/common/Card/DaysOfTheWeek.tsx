@@ -7,6 +7,7 @@ const Container = styled.div`
   flex-direction: column;
   padding: 20px;
   height: 100%;
+  width: 100%;
 `;
 
 const Title = styled.div`
@@ -41,6 +42,7 @@ const Day = styled.div`
   flex-direction: row;
   justify-content: space-around;
   margin-bottom: 20px;
+  align-items: flex-end;
 `;
 
 const Punch = styled.div`
@@ -97,13 +99,6 @@ const DaysOfTheWeek = ({days, favouriteDay, totalVisits}: UserStats['visits']) =
               </DayOfWeek>
             ))}
           </Week>
-          <div>
-            <SurTitle>We saw you the most on</SurTitle>
-            <Figure>{getDayOfTheWeekAsString(favouriteDay.day)}</Figure>
-            <SurTitle>with</SurTitle>
-            <Figure>{favouriteDay.numberOfVisits}</Figure>
-            <SurTitle>visits!</SurTitle>
-          </div>
         </Day>
         <Punch>
           You visited the Chaquip on <Big>{totalVisits}</Big> different days

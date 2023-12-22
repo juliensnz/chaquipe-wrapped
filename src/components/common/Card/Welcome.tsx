@@ -6,6 +6,7 @@ const Container = styled.div`
   flex-direction: column;
   padding: 20px;
   height: 100%;
+  width: 100%;
 `;
 
 const Title = styled.div`
@@ -33,14 +34,12 @@ const Punch = styled.div`
   gap: 15px;
 `;
 
-const Welcome = ({profile:{first_name, last_name}}: Client) => {
+const Welcome = ({profile: {first_name, last_name}}: Client) => {
   return (
     <Container>
       <Title>{`Welcome to your chaquip wrapped, ${first_name} ${last_name} ! 😺`}</Title>
       <Data>
-        <Punch>
-          punch
-        </Punch>
+        <Punch>punch</Punch>
       </Data>
     </Container>
   );

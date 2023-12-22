@@ -6,6 +6,7 @@ const Container = styled.div`
   flex-direction: column;
   padding: 20px;
   height: 100%;
+  width: 100%;
 `;
 
 const Title = styled.div`

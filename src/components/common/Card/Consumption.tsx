@@ -6,6 +6,7 @@ const Container = styled.div`
   flex-direction: column;
   padding: 20px;
   height: 100%;
+  width: 100%;
 `;
 
 const Title = styled.div`
@@ -55,7 +56,7 @@ const Big = styled.div`
   font-weight: bold;
 `;
 
-const Consumption = ({drinksPerHour,numberOfDrinks, numberOfRequiredAnts}: UserStats['personnalConsumption']) => {
+const Consumption = ({drinksPerHour, numberOfDrinks, numberOfRequiredAnts}: UserStats['personnalConsumption']) => {
   return (
     <Container>
       <Title>{"We're all here for the same thing... 🍻"}</Title>
@@ -67,11 +68,14 @@ const Consumption = ({drinksPerHour,numberOfDrinks, numberOfRequiredAnts}: UserS
           </div>
           <div>
             <SurTitle>On average, you were around</SurTitle>
-            <Figure>{drinksPerHour} drink{drinksPerHour>1 ? 's' : ''} per hour !</Figure>
+            <Figure>
+              {drinksPerHour} drink{drinksPerHour > 1 ? 's' : ''} per hour !
+            </Figure>
           </div>
         </Day>
         <Punch>
-          In one sitting, it would require <Big>{Intl.NumberFormat("en-US").format(numberOfRequiredAnts)}</Big> ants to drink it all ! 🐜
+          In one sitting, it would require <Big>{Intl.NumberFormat('en-US').format(numberOfRequiredAnts)}</Big> ants to
+          drink it all ! 🐜
         </Punch>
         <div></div>
       </Data>
