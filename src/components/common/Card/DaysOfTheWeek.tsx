@@ -56,23 +56,57 @@ const Big = styled.div`
   font-weight: bold;
 `;
 
+const Week = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: flex-end;
+  gap: 10px;
+`;
+
+const DayOfWeek = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+`;
+const Bar = styled.div<{percent: number}>`
+  background: white;
+  border-radius: 5px;
+  width: 50px;
+  height: ${({percent}) => `${percent * 100}px`};
+`;
+const Label = styled.div``;
+
 const DaysOfTheWeek = ({days, favouriteDay, totalVisits}: UserStats['visits']) => {
+  const filteredDays = Object.values(days).filter((_, index) => index !== 0 && index !== 6);
+  const maxDay = filteredDays.reduce((max, day) => Math.max(max, day), 0);
+
   return (
     <Container>
       <Title>{'Any day is a good day for a drink ! 📅'}</Title>
       <Data>
         <Day>
-          <div>
+          <Week>
             {/* TODO: chart of the week ? */}
-            {Object.values(days).map((day, index) => (<Figure key={index}>{`${getDayOfTheWeekAsString(index)}: ${day}`}</Figure>))}
-          </div>
+            {filteredDays.map((day, index) => (
+              <DayOfWeek key={index}>
+                <Figure>{day}</Figure>
+                <Bar percent={day / maxDay}></Bar>
+                <Label>{getDayOfTheWeekAsString(index + 1).slice(0, 2)}</Label>
+              </DayOfWeek>
+            ))}
+          </Week>
           <div>
-            <SurTitle>You were here on </SurTitle>
-            <Figure>{totalVisits} different days</Figure>
+            <SurTitle>We saw you the most on</SurTitle>
+            <Figure>{getDayOfTheWeekAsString(favouriteDay.day)}</Figure>
+            <SurTitle>with</SurTitle>
+            <Figure>{favouriteDay.numberOfVisits}</Figure>
+            <SurTitle>visits!</SurTitle>
           </div>
         </Day>
         <Punch>
-        We saw you the most on <Big>{getDayOfTheWeekAsString(favouriteDay.day)}</Big> with {favouriteDay.numberOfVisits} visits!
+          You visited the Chaquip on <Big>{totalVisits}</Big> different days
         </Punch>
         <div></div>
       </Data>
