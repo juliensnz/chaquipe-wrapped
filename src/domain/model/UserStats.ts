@@ -6,6 +6,7 @@ type UserStats = {
   latestNight: {leftAt: number; timeElapsedSinceNoon: number; date: string};
   totalTimeSpent: number;
   totalRounds: {rounds: number; drinks: number; biggestRound: number};
+  visitsPerDay: {days: {[day: string]: number}; favouriteDay: {day: number; numberOfVisits: number}};
 };
 
 export type {UserStats};

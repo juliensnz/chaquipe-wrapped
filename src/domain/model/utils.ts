@@ -94,6 +94,9 @@ const groupBy = <T>(array: T[], key: (item: T) => string | number) =>
     return groups;
   }, {} as Record<string | number, T[]>);
 
+const getDayOfTheWeekAsString = (day: number) =>
+  ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][day];
+
 export {
   areObjectsEqual,
   arrayUnique,
@@ -117,6 +120,7 @@ export {
   pick,
   upperCamelize,
   waitFor,
+  getDayOfTheWeekAsString,
 };
 
 export type {UUID};

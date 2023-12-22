@@ -62,7 +62,7 @@ const Generosity = ({rounds, drinks, biggestRound}: UserStats['totalRounds']) =>
       <Data>
         <Day>
           <div>
-            <SurTitle>You offered</SurTitle>
+            <SurTitle>You gifted</SurTitle>
             <Figure>{rounds} rounds</Figure>
           </div>
           <div>
@@ -71,7 +71,7 @@ const Generosity = ({rounds, drinks, biggestRound}: UserStats['totalRounds']) =>
           </div>
         </Day>
         <Punch>
-          In total, you offered <Big>{drinks}</Big> drinks! Cheers!
+          In total, you gifted <Big>{drinks}</Big> drinks! Cheers!
         </Punch>
         <div></div>
       </Data>

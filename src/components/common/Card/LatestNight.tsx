@@ -58,7 +58,7 @@ const Big = styled.div`
 const LatestNight = ({date, leftAt, totalTimeSpent}: UserStats['latestNight'] & {totalTimeSpent: number}) => {
   return (
     <Container>
-      <Title>{"It's better when it last longer 🎉"}</Title>
+      <Title>{"It's better when it lasts longer 🎉"}</Title>
       <Data>
         <Day>
           <div>
@@ -67,7 +67,7 @@ const LatestNight = ({date, leftAt, totalTimeSpent}: UserStats['latestNight'] & 
           </div>
           <div>
             <SurTitle>You left at</SurTitle>
-            <Figure>{new Date(leftAt).toLocaleTimeString().slice(0, 5)}</Figure>
+            <Figure>{new Date(leftAt).toLocaleTimeString().slice(0, 4)}</Figure>
           </div>
         </Day>
         <Punch>

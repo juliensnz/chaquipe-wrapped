@@ -172,6 +172,40 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
     {expenses: 0, quantity: 0, date: firstDate}
   );
 
+  const visitsPerDay = timeSpentPerDay.reduce<UserStats['visitsPerDay']>(
+    (visitsPerDay, {date}) => {
+      const [day, month, year] = date.split('/').map(data => parseInt(data));
+      const currentDay = new Date(year, month - 1, day).getDay();
+      visitsPerDay.days[currentDay] = visitsPerDay.days[currentDay] + 1;
+
+      return {
+        days: visitsPerDay.days,
+        favouriteDay:
+          visitsPerDay.days[currentDay] > visitsPerDay.favouriteDay.numberOfVisits
+            ? {
+                day: currentDay,
+                numberOfVisits: visitsPerDay.days[currentDay],
+              }
+            : visitsPerDay.favouriteDay,
+      };
+    },
+    {
+      days: {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+      } as {[day: number]: number},
+      favouriteDay: {
+        day: 0,
+        numberOfVisits: 0,
+      },
+    }
+  );
+
   const totalVolume = Math.floor((purchases.reduce((total, purchase) => total + purchase.item.volume, 0) / 330) * 250);
   const totalPaid = payments.reduce((total, payment) => total + payment.amount, 0);
   const totalRounds = getNumberOfRounds(purchases);
@@ -184,6 +218,7 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
     latestNight,
     totalTimeSpent,
     totalRounds,
+    visitsPerDay,
   };
 };
 

@@ -4,6 +4,7 @@ import {LatestNight} from '@/components/common/Card/LatestNight';
 import {useCardIndex} from '@/components/hooks/useCardIndex';
 import {UserStats} from '@/domain/model/UserStats';
 import styled from 'styled-components';
+import {DaysOfTheWeek} from './Card/DaysOfTheWeek';
 
 const Center = styled.div`
   width: 100vw;
@@ -42,7 +43,7 @@ const Story = ({stats}: StoryProps) => {
   const cards = [
     <LatestNight key="latestNight" {...stats.latestNight} totalTimeSpent={stats.totalTimeSpent} />,
     <Generosity key="generosity" {...stats.totalRounds} />,
-    2,
+    <DaysOfTheWeek key="daysOfTheWeek" {...stats.visitsPerDay}/>,
     3,
     4,
     5,
