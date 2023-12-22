@@ -5,8 +5,13 @@ type UserStats = {
   mostExpensiveNight: {expenses: number; quantity: number; date: string};
   latestNight: {leftAt: number; timeElapsedSinceNoon: number; date: string};
   totalTimeSpent: number;
-  totalRounds: {rounds: number; drinks: number; biggestRound: number};
-  visitsPerDay: {days: {[day: string]: number}; favouriteDay: {day: number; numberOfVisits: number}};
+  rounds: {drinksForSelf: number; offeredRounds: number; drinks: number; biggestRound: number};
+  visits: {days: {[day: string]: number}; favouriteDay: {day: number; numberOfVisits: number}; totalVisits: number};
+  personnalConsumption: {
+    numberOfDrinks: number;
+    drinksPerHour: number;
+    numberOfRequiredAnts: number;
+  };
 };
 
 export type {UserStats};

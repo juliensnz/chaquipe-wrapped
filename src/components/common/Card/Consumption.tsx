@@ -1,6 +1,5 @@
 import {UserStats} from '@/domain/model/UserStats';
 import styled from 'styled-components';
-import {getDayOfTheWeekAsString} from '@/domain/model/utils';
 
 const Container = styled.div`
   display: flex;
@@ -56,23 +55,23 @@ const Big = styled.div`
   font-weight: bold;
 `;
 
-const DaysOfTheWeek = ({days, favouriteDay, totalVisits}: UserStats['visits']) => {
+const Consumption = ({drinksPerHour,numberOfDrinks, numberOfRequiredAnts}: UserStats['personnalConsumption']) => {
   return (
     <Container>
-      <Title>{'Any day is a good day for a drink ! 📅'}</Title>
+      <Title>{"We're all here for the same thing ! 🍻"}</Title>
       <Data>
         <Day>
           <div>
-            {/* TODO: chart of the week ? */}
-            {Object.values(days).map((day, index) => (<Figure key={index}>{`${getDayOfTheWeekAsString(index)}: ${day}`}</Figure>))}
+            <SurTitle>You ordered</SurTitle>
+            <Figure>{numberOfDrinks} drinks for yourself</Figure>
           </div>
           <div>
-            <SurTitle>You were here on </SurTitle>
-            <Figure>{totalVisits} different days</Figure>
+            <SurTitle>On average, you were around</SurTitle>
+            <Figure>{drinksPerHour} drink{drinksPerHour>1 ? 's' : ''} per hour !</Figure>
           </div>
         </Day>
         <Punch>
-        We saw you the most on <Big>{getDayOfTheWeekAsString(favouriteDay.day)}</Big> with {favouriteDay.numberOfVisits} visits!
+          In one sitting, it would require <Big>{Intl.NumberFormat("en-US").format(numberOfRequiredAnts)}</Big> ants to drink it all ! 🐜
         </Punch>
         <div></div>
       </Data>
@@ -80,4 +79,4 @@ const DaysOfTheWeek = ({days, favouriteDay, totalVisits}: UserStats['visits']) =
   );
 };
 
-export {DaysOfTheWeek};
+export {Consumption};

@@ -55,7 +55,7 @@ const Big = styled.div`
   font-weight: bold;
 `;
 
-const Generosity = ({rounds, drinks, biggestRound}: UserStats['totalRounds']) => {
+const Generosity = ({offeredRounds, drinks, biggestRound}: UserStats['rounds']) => {
   return (
     <Container>
       <Title>{"It's always more fun together 👯‍♂️"}</Title>
@@ -63,7 +63,7 @@ const Generosity = ({rounds, drinks, biggestRound}: UserStats['totalRounds']) =>
         <Day>
           <div>
             <SurTitle>You gifted</SurTitle>
-            <Figure>{rounds} rounds</Figure>
+            <Figure>{offeredRounds} rounds</Figure>
           </div>
           <div>
             <SurTitle>The biggest was</SurTitle>

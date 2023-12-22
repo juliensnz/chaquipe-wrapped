@@ -10,6 +10,8 @@ import {purchaseRepository} from '@/infrastructure/firestore/PurchaseRepository'
 
 const TWELVE_HOURS = 12 * 60 * 60 * 1000;
 const THIRTY_MINUTES = 30 * 60 * 1000;
+// https://askentomologists.com/2016/09/29/how-much-water-can-ants-drink/
+const NUMBER_OF_ANTS_PER_CL = 1 / (7 / 10_000);
 
 const getFirstPurchase = (purchases: Purchase[]) =>
   purchases.reduce((first, purchase) => {
@@ -29,7 +31,9 @@ const getLastPurchase = (purchases: Purchase[]) =>
     return last;
   }, purchases[0]);
 
-const getNumberOfRounds = (purchases: Purchase[]): {rounds: number; drinks: number; biggestRound: number} => {
+const getNumberOfRounds = (
+  purchases: Purchase[]
+): {drinksForSelf: number; offeredRounds: number; drinks: number; biggestRound: number} => {
   let rounds: Purchase[][] = [];
   let index = 0;
 
@@ -55,7 +59,7 @@ const getNumberOfRounds = (purchases: Purchase[]): {rounds: number; drinks: numb
 
     return total;
   }, 0);
-  return {rounds: offeredRounds.length, drinks: offeredDrinks, biggestRound};
+  return {drinksForSelf: rounds.length, offeredRounds: offeredRounds.length, drinks: offeredDrinks, biggestRound};
 };
 
 const generateAllStats = async (): Promise<Either<Record<string, UserStats>, RuntimeError>> => {
@@ -130,6 +134,7 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
     },
     {timeSpent: 0, date: timeSpentPerDay[0].date}
   );
+
   const latestNight = Object.keys(purchasesGroupedByDay).reduce<{
     leftAt: number;
     timeElapsedSinceNoon: number;
@@ -172,21 +177,22 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
     {expenses: 0, quantity: 0, date: firstDate}
   );
 
-  const visitsPerDay = timeSpentPerDay.reduce<UserStats['visitsPerDay']>(
-    (visitsPerDay, {date}) => {
+  const visits = timeSpentPerDay.reduce<UserStats['visits']>(
+    (visits, {date}) => {
       const [day, month, year] = date.split('/').map(data => parseInt(data));
       const currentDay = new Date(year, month - 1, day).getDay();
-      visitsPerDay.days[currentDay] = visitsPerDay.days[currentDay] + 1;
+      visits.days[currentDay]++;
+      visits.totalVisits++;
 
       return {
-        days: visitsPerDay.days,
+        ...visits,
         favouriteDay:
-          visitsPerDay.days[currentDay] > visitsPerDay.favouriteDay.numberOfVisits
+          visits.days[currentDay] > visits.favouriteDay.numberOfVisits
             ? {
                 day: currentDay,
-                numberOfVisits: visitsPerDay.days[currentDay],
+                numberOfVisits: visits.days[currentDay],
               }
-            : visitsPerDay.favouriteDay,
+            : visits.favouriteDay,
       };
     },
     {
@@ -203,12 +209,19 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
         day: 0,
         numberOfVisits: 0,
       },
+      totalVisits: 0,
     }
   );
 
   const totalVolume = Math.floor((purchases.reduce((total, purchase) => total + purchase.item.volume, 0) / 330) * 250);
   const totalPaid = payments.reduce((total, payment) => total + payment.amount, 0);
-  const totalRounds = getNumberOfRounds(purchases);
+  const rounds = getNumberOfRounds(purchases);
+
+  const personnalConsumption = {
+    numberOfDrinks: rounds.drinksForSelf,
+    drinksPerHour: Math.ceil(totalTimeSpent / 1000 / 60 / 60 / rounds.drinksForSelf),
+    numberOfRequiredAnts: Math.round(NUMBER_OF_ANTS_PER_CL * (rounds.drinksForSelf * 250)),
+  };
 
   return {
     totalPaid,
@@ -217,8 +230,9 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
     mostExpensiveNight,
     latestNight,
     totalTimeSpent,
-    totalRounds,
-    visitsPerDay,
+    rounds,
+    visits,
+    personnalConsumption,
   };
 };
 
