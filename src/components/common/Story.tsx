@@ -21,8 +21,8 @@ const Center = styled.div`
 `;
 
 const Container = styled.div`
-  max-width: 400px;
-  max-height: 950px;
+  max-width: 500px;
+  max-height: 1000px;
   width: 100vw;
   height: 100vh;
   position: relative;

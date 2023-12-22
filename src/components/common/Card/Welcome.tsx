@@ -15,6 +15,7 @@ const Welcome = ({profile: {image_192, first_name, last_name}}: Client) => {
       <Data>
         <Img src={image_192} alt={`${first_name} ${last_name} profile picture`} width={192} height={192} />
       </Data>
+      <Data></Data>
     </Container>
   );
 };
