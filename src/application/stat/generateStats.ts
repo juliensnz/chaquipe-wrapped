@@ -219,7 +219,7 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
 
   const personnalConsumption = {
     numberOfDrinks: rounds.drinksForSelf,
-    drinksPerHour: Math.ceil(totalTimeSpent / 1000 / 60 / 60 / rounds.drinksForSelf),
+    drinksPerHour: Math.ceil((totalTimeSpent / 1000 / 60 / 60 / rounds.drinksForSelf) * 10) / 10,
     numberOfRequiredAnts: Math.round(NUMBER_OF_ANTS_PER_CL * (rounds.drinksForSelf * 250)),
   };
 

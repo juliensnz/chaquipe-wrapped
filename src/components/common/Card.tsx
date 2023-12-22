@@ -63,8 +63,9 @@ const backgrounds = [
 const Container = styled.div<{from: string; to: string; isVisible: boolean}>`
   background-image: linear-gradient(to top, ${({from}) => from} 0%, ${({to}) => to} 100%);
 
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -74,8 +75,8 @@ const Container = styled.div<{from: string; to: string; isVisible: boolean}>`
 `;
 
 const Overlay = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   position: absolute;
   display: flex;
   flex-direction: row;

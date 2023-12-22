@@ -52,7 +52,7 @@ export const getStaticPaths = (async () => {
     throw usersResult.getError()
   }
 
-  const users = usersResult.get()//.slice(0, 10);
+  const users = usersResult.get()
 
   return {
     paths: users.map(user => ({

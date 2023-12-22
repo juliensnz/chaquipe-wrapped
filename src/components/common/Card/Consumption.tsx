@@ -1,3 +1,4 @@
+import {Title} from '@/components/common/Card/common';
 import {UserStats} from '@/domain/model/UserStats';
 import styled from 'styled-components';
 
@@ -7,15 +8,6 @@ const Container = styled.div`
   padding: 20px;
   height: 100%;
   width: 100%;
-`;
-
-const Title = styled.div`
-  font-size: 40px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  height: 300px;
-  display: flex;
-  align-items: center;
 `;
 
 const Data = styled.div`
@@ -41,6 +33,12 @@ const Day = styled.div`
   flex-direction: row;
   justify-content: space-around;
   margin-bottom: 20px;
+
+  & > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 `;
 
 const Punch = styled.div`
@@ -64,13 +62,15 @@ const Consumption = ({drinksPerHour, numberOfDrinks, numberOfRequiredAnts}: User
         <Day>
           <div>
             <SurTitle>You ordered</SurTitle>
-            <Figure>{numberOfDrinks} drinks for yourself</Figure>
+            <Figure>{numberOfDrinks} drinks </Figure>
+            <SurTitle>for yourself</SurTitle>
           </div>
           <div>
-            <SurTitle>On average, you were around</SurTitle>
+            <SurTitle>On average, you had</SurTitle>
             <Figure>
-              {drinksPerHour} drink{drinksPerHour > 1 ? 's' : ''} per hour !
+              {drinksPerHour} drink{drinksPerHour > 1 ? 's' : ''}
             </Figure>
+            <SurTitle>per hour!</SurTitle>
           </div>
         </Day>
         <Punch>

@@ -1,6 +1,7 @@
 import {UserStats} from '@/domain/model/UserStats';
 import styled from 'styled-components';
 import {getDayOfTheWeekAsString} from '@/domain/model/utils';
+import {Title} from '@/components/common/Card/common';
 
 const Container = styled.div`
   display: flex;
@@ -8,15 +9,6 @@ const Container = styled.div`
   padding: 20px;
   height: 100%;
   width: 100%;
-`;
-
-const Title = styled.div`
-  font-size: 40px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  height: 300px;
-  display: flex;
-  align-items: center;
 `;
 
 const Data = styled.div`

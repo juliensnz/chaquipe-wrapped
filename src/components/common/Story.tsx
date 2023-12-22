@@ -16,11 +16,23 @@ const Center = styled.div`
   align-items: center;
   justify-content: center;
   gap: 30px;
+  background-color: #1c1c1c;
+  background: linear-gradient(180deg, #1c1c1c 100%, #000000 0);
 `;
 
-const Container = styled.div``;
-const Pils = styled.div`
+const Container = styled.div`
+  max-width: 400px;
+  max-height: 800px;
   width: 100vw;
+  height: 100vh;
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+`;
+
+const Pils = styled.div`
+  z-index: 1;
+  width: 100%;
   position: absolute;
   top: 10px;
   display: flex;
@@ -43,10 +55,10 @@ type StoryProps = {stats: UserStats};
 
 const Story = ({stats}: StoryProps) => {
   const cards = [
-    <Welcome key="welcome" {...stats.client}/>,
-    <DaysOfTheWeek key="daysOfTheWeek" {...stats.visits}/>,
+    <Welcome key="welcome" {...stats.client} />,
+    <DaysOfTheWeek key="daysOfTheWeek" {...stats.visits} />,
     <LatestNight key="latestNight" {...stats.latestNight} totalTimeSpent={stats.totalTimeSpent} />,
-    <Consumption key="consumption" {...stats.personnalConsumption}/>,
+    <Consumption key="consumption" {...stats.personnalConsumption} />,
     <Generosity key="generosity" {...stats.rounds} />,
     4,
     5,
@@ -55,18 +67,20 @@ const Story = ({stats}: StoryProps) => {
   const [currentCardIndex, next, previous] = useCardIndex(cards.length);
 
   return (
-    <Container>
-      <Pils>
-        {cards.map((_, index) => (
-          <Pil key={index} isCurrent={currentCardIndex === index} />
+    <Center>
+      <Container>
+        <Pils>
+          {cards.map((_, index) => (
+            <Pil key={index} isCurrent={currentCardIndex === index} />
+          ))}
+        </Pils>
+        {cards.map((card, index) => (
+          <Card key={index} onNext={next} onPrevious={previous} isVisible={currentCardIndex === index}>
+            {card}
+          </Card>
         ))}
-      </Pils>
-      {cards.map((card, index) => (
-        <Card key={index} onNext={next} onPrevious={previous} isVisible={currentCardIndex === index}>
-          {card}
-        </Card>
-      ))}
-    </Container>
+      </Container>
+    </Center>
   );
 };
 
