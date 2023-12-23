@@ -3,20 +3,21 @@ import {generateAllStats} from '@/application/stat/generateStats';
 import {UserStats} from '@/domain/model/UserStats';
 import {clientRepository} from '@/infrastructure/firestore/ClientRepository';
 import {GetStaticPaths, GetStaticPropsContext} from 'next';
+import {GlobalStats} from '@/domain/model/GlobalStats';
 
-type PageProps = {stats: UserStats | undefined};
+type PageProps = {stats: UserStats | undefined, global: GlobalStats | undefined};
 
-const Page = ({stats}: PageProps) => {
-  if (!stats) {
+const Page = ({stats, global}: PageProps) => {
+  if (!stats || !global) {
     return <div>No stats found</div>;
   }
 
-  return <Story stats={stats} />;
+  return <Story stats={stats} global={global} />;
 };
 
 export default Page;
 
-let allStats: Record<string, UserStats> | undefined = undefined;
+let allStats: {allUserStats: Record<string, UserStats>; globalStats: GlobalStats} | undefined = undefined;
 
 export async function getStaticProps(context: GetStaticPropsContext) {
   if (allStats === undefined) {
@@ -31,7 +32,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     allStats = allStatsResult.get();
   }
 
-  const userStats = allStats[context.params?.userId as string ?? ''];
+  const userStats = allStats.allUserStats[context.params?.userId as string ?? ''];
 
   if (userStats === undefined) {
     return {
@@ -39,8 +40,10 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     }
   }
 
+  const globalStats = allStats.globalStats;
+
   return {
-    props: {stats: userStats}
+    props: {stats: userStats, global: globalStats}
   }
 }
 

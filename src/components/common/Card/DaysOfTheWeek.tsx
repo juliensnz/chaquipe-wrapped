@@ -75,7 +75,6 @@ const DaysOfTheWeek = ({days, favouriteDay, totalVisits}: UserStats['visits']) =
       <Data>
         <Day>
           <Week>
-            {/* TODO: chart of the week ? */}
             {filteredDays.map((day, index) => (
               <DayOfWeek key={index}>
                 <Figure>{day}</Figure>

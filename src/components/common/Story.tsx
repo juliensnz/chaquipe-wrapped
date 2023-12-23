@@ -7,6 +7,8 @@ import styled from 'styled-components';
 import {DaysOfTheWeek} from './Card/DaysOfTheWeek';
 import {Consumption} from './Card/Consumption';
 import {Welcome} from './Card/Welcome';
+import {LeaderBoard} from './Card/LeaderBoard';
+import {GlobalStats} from '@/domain/model/GlobalStats';
 
 const Center = styled.div`
   width: 100vw;
@@ -51,16 +53,16 @@ const Pil = styled.div<{isCurrent?: boolean}>`
   background-color: ${({isCurrent}) => (isCurrent ? 'white' : 'rgba(255, 255, 255, 0.5)')};
 `;
 
-type StoryProps = {stats: UserStats};
+type StoryProps = {stats: UserStats, global: GlobalStats};
 
-const Story = ({stats}: StoryProps) => {
+const Story = ({stats, global}: StoryProps) => {
   const cards = [
     <Welcome key="welcome" {...stats.client} />,
     <DaysOfTheWeek key="daysOfTheWeek" {...stats.visits} />,
     <LatestNight key="latestNight" {...stats.latestNight} totalTimeSpent={stats.totalTimeSpent} />,
     <Consumption key="consumption" {...stats.personnalConsumption} />,
     <Generosity key="generosity" {...stats.rounds} />,
-    4,
+    <LeaderBoard key="leaderboard" {...global} />,
     5,
     6,
   ];

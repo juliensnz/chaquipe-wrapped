@@ -1,4 +1,5 @@
 import {Client} from '@/domain/model/Client';
+import {GlobalStats, LeaderBoard} from '@/domain/model/GlobalStats';
 import {Payment} from '@/domain/model/Payment';
 import {Purchase} from '@/domain/model/Purchase';
 import {Either, Result} from '@/domain/model/Result';
@@ -62,7 +63,9 @@ const getNumberOfRounds = (
   return {drinksForSelf: rounds.length, offeredRounds: offeredRounds.length, drinks: offeredDrinks, biggestRound};
 };
 
-const generateAllStats = async (): Promise<Either<Record<string, UserStats>, RuntimeError>> => {
+const generateAllStats = async (): Promise<
+  Either<{allUserStats: Record<string, UserStats>; globalStats: GlobalStats}, RuntimeError>
+> => {
   const paymentsResult = await paymentRepository.findAll();
   const purchasesResult = await purchaseRepository.findAll();
   const clientsResult = await clientRepository.findAll();
@@ -81,20 +84,22 @@ const generateAllStats = async (): Promise<Either<Record<string, UserStats>, Run
   const payments = paymentsResult.get();
   const clients = clientsResult.get();
 
-  return Result.Ok(
-    Object.fromEntries(
-      clients
-        .map(client => [
-          client.id,
-          generateUserStats(
-            purchases.filter(purchase => purchase.client.id === client.id),
-            payments.filter(payment => payment.client.id === client.id),
-            client
-          ),
-        ])
-        .filter(([, stats]) => stats !== null)
-    )
+  const allUserStats: Record<string, UserStats> = Object.fromEntries(
+    clients
+      .map(client => [
+        client.id,
+        generateUserStats(
+          purchases.filter(purchase => purchase.client.id === client.id),
+          payments.filter(payment => payment.client.id === client.id),
+          client
+        ),
+      ])
+      .filter(([, stats]) => stats !== null)
   );
+
+  const globalStats = generateGlobalStats(allUserStats);
+
+  return Result.Ok({allUserStats, globalStats});
 };
 
 const generateUserStats = (purchases: Purchase[], payments: Payment[], client: Client): UserStats | null => {
@@ -114,11 +119,12 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
     return grouped;
   }, {} as {[key: string]: Purchase[]});
 
+  const daysOfPresence: {[day: string]: boolean} = {};
   const timeSpentPerDay = Object.keys(purchasesGroupedByDay).map(day => {
     const purchasesOfTheDay = purchasesGroupedByDay[day];
     const timeSpent =
       getLastPurchase(purchasesOfTheDay).time - getFirstPurchase(purchasesOfTheDay).time + THIRTY_MINUTES;
-
+    daysOfPresence[day] = true;
     return {timeSpent, date: day};
   });
   const totalTimeSpent = timeSpentPerDay.reduce((total, day) => total + day.timeSpent, 0);
@@ -234,6 +240,57 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
     rounds,
     visits,
     personnalConsumption,
+  };
+};
+
+type StatPerUser = {
+  userId: string;
+  name: string;
+  picture: string;
+  drinks: number;
+  giftedRounds: number;
+  numberOfDays: number;
+  totalTime: number;
+};
+
+const sortAndRank = (
+  statsPerUser: StatPerUser[],
+  statName: 'drinks' | 'giftedRounds' | 'numberOfDays' | 'totalTime'
+): LeaderBoard => {
+  return Object.fromEntries(
+    statsPerUser
+      .sort(({[statName]: a}, {[statName]: b}) => b - a)
+      .map(({userId, name, picture, [statName]: amount}, rank) => [userId, {amount, name, picture, rank}])
+  );
+};
+
+const generateGlobalStats = (allUserStats: Record<string, UserStats>): GlobalStats => {
+  const statsPerUser = Object.entries(allUserStats).map(([userId, userStats]) => ({
+    userId,
+    name: `${userStats.client.profile.first_name} ${userStats.client.profile.last_name}`,
+    picture: userStats.client.profile.image_192,
+    drinks: userStats.personnalConsumption.numberOfDrinks,
+    giftedRounds: userStats.rounds.offeredRounds,
+    numberOfDays: userStats.visits.totalVisits,
+    totalTime: userStats.totalTimeSpent,
+  }));
+
+  const [drinks, giftedRounds, numberOfDays, totalTime] = [
+    'drinks' as const,
+    'giftedRounds' as const,
+    'numberOfDays' as const,
+    'totalTime' as const,
+  ].map(stat => sortAndRank(statsPerUser, stat));
+
+  return {
+    leaderboards: {
+      drinks,
+      giftedRounds,
+      attendance: {
+        numberOfDays,
+        totalTime,
+      },
+    },
   };
 };
 
