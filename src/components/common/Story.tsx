@@ -12,7 +12,7 @@ import {GlobalStats} from '@/domain/model/GlobalStats';
 
 const Center = styled.div`
   width: 100vw;
-  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,7 +53,7 @@ const Pil = styled.div<{isCurrent?: boolean}>`
   background-color: ${({isCurrent}) => (isCurrent ? 'white' : 'rgba(255, 255, 255, 0.5)')};
 `;
 
-type StoryProps = {stats: UserStats, global: GlobalStats};
+type StoryProps = {stats: UserStats; global: GlobalStats};
 
 const Story = ({stats, global}: StoryProps) => {
   const cards = [
