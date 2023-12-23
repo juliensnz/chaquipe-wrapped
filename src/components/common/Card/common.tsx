@@ -4,7 +4,7 @@ const Title = styled.div`
   font-size: 40px;
   font-weight: bold;
   margin-bottom: 20px;
-  height: 300px;
+  height: 260px;
   display: flex;
   align-items: center;
   line-height: 1.4;

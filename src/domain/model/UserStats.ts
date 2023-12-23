@@ -9,7 +9,12 @@ type UserStats = {
   latestNight: {leftAt: number; timeElapsedSinceNoon: number; date: string};
   totalTimeSpent: number;
   rounds: {drinksForSelf: number; offeredRounds: number; drinks: number; biggestRound: number};
-  visits: {days: {[day: string]: number}; favouriteDay: {day: number; numberOfVisits: number}; totalVisits: number};
+  visits: {
+    days: {[day: string]: number};
+    favouriteDay: {day: number; numberOfVisits: number};
+    totalVisits: number;
+    dates: {[date: string]: boolean};
+  };
   personnalConsumption: {
     numberOfDrinks: number;
     drinksPerHour: number;
@@ -17,4 +22,17 @@ type UserStats = {
   };
 };
 
-export type {UserStats};
+type EnrichedUserStats = UserStats & {
+  relations: {
+    bestFriends: {
+      [userId: string]: {
+        occurrences: number;
+        name: string;
+        picture: string;
+      };
+    };
+    uniquePeople: number;
+  };
+};
+
+export type {UserStats, EnrichedUserStats};

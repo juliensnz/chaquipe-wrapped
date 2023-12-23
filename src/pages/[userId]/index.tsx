@@ -1,11 +1,11 @@
 import {Story} from '@/components/common/Story';
 import {generateAllStats} from '@/application/stat/generateStats';
-import {UserStats} from '@/domain/model/UserStats';
+import {EnrichedUserStats} from '@/domain/model/UserStats';
 import {clientRepository} from '@/infrastructure/firestore/ClientRepository';
 import {GetStaticPaths, GetStaticPropsContext} from 'next';
 import {GlobalStats} from '@/domain/model/GlobalStats';
 
-type PageProps = {stats: UserStats | undefined, global: GlobalStats | undefined};
+type PageProps = {stats: EnrichedUserStats | undefined, global: GlobalStats | undefined};
 
 const Page = ({stats, global}: PageProps) => {
   if (!stats || !global) {
@@ -17,7 +17,7 @@ const Page = ({stats, global}: PageProps) => {
 
 export default Page;
 
-let allStats: {allUserStats: Record<string, UserStats>; globalStats: GlobalStats} | undefined = undefined;
+let allStats: {allUserStats: Record<string, EnrichedUserStats>; globalStats: GlobalStats} | undefined = undefined;
 
 export async function getStaticProps(context: GetStaticPropsContext) {
   if (allStats === undefined) {

@@ -4,7 +4,7 @@ import {Payment} from '@/domain/model/Payment';
 import {Purchase} from '@/domain/model/Purchase';
 import {Either, Result} from '@/domain/model/Result';
 import {RuntimeError} from '@/domain/model/RuntimeError';
-import {UserStats} from '@/domain/model/UserStats';
+import {EnrichedUserStats, UserStats} from '@/domain/model/UserStats';
 import {clientRepository} from '@/infrastructure/firestore/ClientRepository';
 import {paymentRepository} from '@/infrastructure/firestore/PaymentRepository';
 import {purchaseRepository} from '@/infrastructure/firestore/PurchaseRepository';
@@ -64,7 +64,7 @@ const getNumberOfRounds = (
 };
 
 const generateAllStats = async (): Promise<
-  Either<{allUserStats: Record<string, UserStats>; globalStats: GlobalStats}, RuntimeError>
+  Either<{allUserStats: Record<string, EnrichedUserStats>; globalStats: GlobalStats}, RuntimeError>
 > => {
   const paymentsResult = await paymentRepository.findAll();
   const purchasesResult = await purchaseRepository.findAll();
@@ -99,7 +99,9 @@ const generateAllStats = async (): Promise<
 
   const globalStats = generateGlobalStats(allUserStats);
 
-  return Result.Ok({allUserStats, globalStats});
+  const enrichedUserStats = generateEnrichedUserStats(allUserStats, globalStats, clients);
+
+  return Result.Ok({allUserStats: enrichedUserStats, globalStats});
 };
 
 const generateUserStats = (purchases: Purchase[], payments: Payment[], client: Client): UserStats | null => {
@@ -199,6 +201,10 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
                 numberOfVisits: visits.days[currentDay],
               }
             : visits.favouriteDay,
+        dates: {
+          ...visits.dates,
+          [date]: true,
+        },
       };
     },
     {
@@ -216,6 +222,7 @@ const generateUserStats = (purchases: Purchase[], payments: Payment[], client: C
         numberOfVisits: 0,
       },
       totalVisits: 0,
+      dates: {},
     }
   );
 
@@ -273,6 +280,7 @@ const generateGlobalStats = (allUserStats: Record<string, UserStats>): GlobalSta
     giftedRounds: userStats.rounds.offeredRounds,
     numberOfDays: userStats.visits.totalVisits,
     totalTime: userStats.totalTimeSpent,
+    presenceDays: userStats.visits.dates,
   }));
 
   const [drinks, giftedRounds, numberOfDays, totalTime] = [
@@ -281,6 +289,19 @@ const generateGlobalStats = (allUserStats: Record<string, UserStats>): GlobalSta
     'numberOfDays' as const,
     'totalTime' as const,
   ].map(stat => sortAndRank(statsPerUser, stat));
+
+  const attendanceRecords = statsPerUser.reduce<GlobalStats['attendanceRecords']>((records, {userId, presenceDays}) => {
+    for (const date of Object.keys(presenceDays)) {
+      if (!records[date]) {
+        records[date] = {
+          [userId]: true,
+        };
+      } else {
+        records[date][userId] = true;
+      }
+    }
+    return records;
+  }, {});
 
   return {
     leaderboards: {
@@ -291,7 +312,64 @@ const generateGlobalStats = (allUserStats: Record<string, UserStats>): GlobalSta
         totalTime,
       },
     },
+    attendanceRecords,
   };
+};
+
+const getRelations = (
+  userStats: UserStats,
+  globalStats: GlobalStats,
+  clients: Client[]
+): EnrichedUserStats['relations'] => {
+  let uniquePeople = 0;
+  const encounters = Object.keys(userStats.visits.dates).reduce<EnrichedUserStats['relations']['bestFriends']>(
+    (encounters, date) => {
+      const userIds = Object.keys(globalStats.attendanceRecords[date]);
+      for (const userId of userIds) {
+        if (userId === userStats.client.id) {
+          continue;
+        }
+        if (encounters[userId] === undefined) {
+          const client = clients.find(({id}) => userId === id);
+          if (client === undefined) {
+            continue;
+          }
+          encounters[userId] = {
+            occurrences: 1,
+            name: `${client.profile.first_name} ${client.profile.last_name}`,
+            picture: client.profile.image_192,
+          };
+          uniquePeople++;
+        } else {
+          encounters[userId].occurrences++;
+        }
+      }
+      return encounters;
+    },
+    {}
+  );
+
+  return {
+    bestFriends: encounters,
+    uniquePeople,
+  };
+};
+
+const generateEnrichedUserStats = (
+  allUserStats: Record<string, UserStats>,
+  globalStats: GlobalStats,
+  clients: Client[]
+): Record<string, EnrichedUserStats> => {
+  return Object.entries(allUserStats).reduce(
+    (allEnrichedUserStats, [userId, userStats]) => ({
+      ...allEnrichedUserStats,
+      [userId]: {
+        ...userStats,
+        relations: getRelations(userStats, globalStats, clients),
+      },
+    }),
+    {}
+  );
 };
 
 export {generateAllStats};

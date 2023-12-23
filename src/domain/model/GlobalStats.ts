@@ -9,7 +9,7 @@ type GlobalStats = {
       totalTime: LeaderBoard;
     };
   };
-  // attendanceRecords: {[day: string]: {[userId: string]: boolean}};
+  attendanceRecords: {[day: string]: {[userId: string]: boolean}};
 };
 
 export type {LeaderBoard, GlobalStats};

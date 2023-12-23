@@ -2,13 +2,13 @@ import {Card} from '@/components/common/Card';
 import {Generosity} from '@/components/common/Card/Generosity';
 import {LatestNight} from '@/components/common/Card/LatestNight';
 import {useCardIndex} from '@/components/hooks/useCardIndex';
-import {UserStats} from '@/domain/model/UserStats';
 import styled from 'styled-components';
 import {DaysOfTheWeek} from './Card/DaysOfTheWeek';
 import {Consumption} from './Card/Consumption';
 import {Welcome} from './Card/Welcome';
-import {LeaderBoard} from './Card/LeaderBoard';
 import {GlobalStats} from '@/domain/model/GlobalStats';
+import {EnrichedUserStats} from '@/domain/model/UserStats';
+import {Relations} from './Card/Relations';
 
 const Center = styled.div`
   width: 100vw;
@@ -53,7 +53,7 @@ const Pil = styled.div<{isCurrent?: boolean}>`
   background-color: ${({isCurrent}) => (isCurrent ? 'white' : 'rgba(255, 255, 255, 0.5)')};
 `;
 
-type StoryProps = {stats: UserStats; global: GlobalStats};
+type StoryProps = {stats: EnrichedUserStats; global: GlobalStats};
 
 const Story = ({stats, global}: StoryProps) => {
   const cards = [
@@ -62,9 +62,9 @@ const Story = ({stats, global}: StoryProps) => {
     <LatestNight key="latestNight" {...stats.latestNight} totalTimeSpent={stats.totalTimeSpent} />,
     <Consumption key="consumption" {...stats.personnalConsumption} />,
     <Generosity key="generosity" {...stats.rounds} />,
-    <LeaderBoard key="leaderboard" {...global} />,
-    5,
-    6,
+    // <LeaderBoard key="leaderboard" {...global} />,
+    <Relations key="relations" {...stats.relations} />,
+    7,
   ];
   const [currentCardIndex, next, previous] = useCardIndex(cards.length);
 
