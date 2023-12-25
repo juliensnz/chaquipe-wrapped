@@ -9,6 +9,7 @@ import {Welcome} from './Card/Welcome';
 import {GlobalStats} from '@/domain/model/GlobalStats';
 import {EnrichedUserStats} from '@/domain/model/UserStats';
 import {Relations} from './Card/Relations';
+import {ShareTheLove} from '@/components/common/Card/ShareTheLove';
 
 const Center = styled.div`
   width: 100vw;
@@ -64,7 +65,7 @@ const Story = ({stats, global}: StoryProps) => {
     <Generosity key="generosity" {...stats.rounds} />,
     // <LeaderBoard key="leaderboard" {...global} />,
     <Relations key="relations" {...stats.relations} />,
-    7,
+    <ShareTheLove key="share" {...stats.client} />,
   ];
   const [currentCardIndex, next, previous] = useCardIndex(cards.length);
 
@@ -76,11 +77,15 @@ const Story = ({stats, global}: StoryProps) => {
             <Pil key={index} isCurrent={currentCardIndex === index} />
           ))}
         </Pils>
-        {cards.map((card, index) => (
-          <Card key={index} onNext={next} onPrevious={previous} isVisible={currentCardIndex === index}>
-            {card}
-          </Card>
-        ))}
+        {cards.map((card, index) => {
+          if (currentCardIndex !== index) return null;
+
+          return (
+            <Card key={index} onNext={next} onPrevious={previous} isVisible={true}>
+              {card}
+            </Card>
+          );
+        })}
       </Container>
     </Center>
   );
