@@ -8,6 +8,7 @@ const Title = styled.div`
   display: flex;
   align-items: center;
   line-height: 1.4;
+  text-wrap: balance;
 `;
 const Container = styled.div`
   display: flex;
