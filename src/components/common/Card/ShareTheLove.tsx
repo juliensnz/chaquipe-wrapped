@@ -34,7 +34,7 @@ const ShareTheLove = ({profile: {image_192, first_name, last_name}}: Client) => 
         <Punch>
           Share this URL with your friends or invite them to type the /chaquip command on slack.
           <br />
-          <Big>See you arround! 😘</Big>
+          <Big>See you around! 😘</Big>
         </Punch>
       </Data>
     </Container>

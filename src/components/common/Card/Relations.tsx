@@ -55,7 +55,7 @@ const Relations = ({bestFriends, uniquePeople}: EnrichedUserStats['relations']) 
           {sortedBestFriends.map(([userId, {name, picture, occurrences}], index) => (
             <Place key={index}>
               <Img src={picture} alt={`${name} profile picture`} width={45} height={45} />
-              <Bar percent={occurrences / Math.max(...sortedBestFriends.map(([,{occurrences}]) => occurrences)) * 3}></Bar>
+              <Bar percent={occurrences / Math.max(...sortedBestFriends.map(([,{occurrences}]) => occurrences)) * 2.5}></Bar>
               <Figure key={userId}>{occurrences}</Figure>
             </Place>
           ))}
