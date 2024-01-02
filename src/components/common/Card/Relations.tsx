@@ -1,4 +1,4 @@
-import {Container, Figure, Punch, Title} from '@/components/common/Card/common';
+import {Container, Figure as BigFigure, Punch, Title} from '@/components/common/Card/common';
 import {EnrichedUserStats} from '@/domain/model/UserStats';
 import styled from 'styled-components';
 
@@ -18,6 +18,10 @@ const Podium = styled.div`
   gap: 10px;
 `;
 
+const Figure = styled(BigFigure)`
+  font-size: 25px;
+`;
+
 const Place = styled.div`
   display: flex;
   flex-direction: row;
@@ -27,7 +31,7 @@ const Place = styled.div`
 const Bar = styled.div<{percent: number}>`
   background: white;
   border-radius: 5px;
-  height: 50px;
+  height: 25px;
   width: ${({percent}) => `${percent * 100}px`};
 `;
 const Img = styled.img`
@@ -41,11 +45,13 @@ const Big = styled.div`
   font-weight: bold;
 `;
 const PodiumLabel = styled.div`
-font-size: 25px;
+  font-size: 25px;
 `;
 
 const Relations = ({bestFriends, uniquePeople}: EnrichedUserStats['relations']) => {
-  const sortedBestFriends = Object.entries(bestFriends).sort(([,{occurrences:a}], [,{occurrences:b}]) => b - a).slice(0,5);
+  const sortedBestFriends = Object.entries(bestFriends)
+    .sort(([, {occurrences: a}], [, {occurrences: b}]) => b - a)
+    .slice(0, 5);
   return (
     <Container>
       <Title>{'You definitely have some best friends 🫂'}</Title>
@@ -54,8 +60,10 @@ const Relations = ({bestFriends, uniquePeople}: EnrichedUserStats['relations']) 
         <Podium>
           {sortedBestFriends.map(([userId, {name, picture, occurrences}], index) => (
             <Place key={index}>
-              <Img src={picture} alt={`${name} profile picture`} width={45} height={45} />
-              <Bar percent={occurrences / Math.max(...sortedBestFriends.map(([,{occurrences}]) => occurrences)) * 2.5}></Bar>
+              <Img src={picture} alt={`${name} profile picture`} width={35} height={35} />
+              <Bar
+                percent={(occurrences / Math.max(...sortedBestFriends.map(([, {occurrences}]) => occurrences))) * 2.5}
+              ></Bar>
               <Figure key={userId}>{occurrences}</Figure>
             </Place>
           ))}
