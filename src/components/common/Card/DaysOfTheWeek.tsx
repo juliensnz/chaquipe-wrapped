@@ -71,7 +71,7 @@ const DaysOfTheWeek = ({days, favouriteDay, totalVisits}: UserStats['visits']) =
 
   return (
     <Container>
-      <Title>{'Any day is a good day for a drink ! 📅'}</Title>
+      <Title>{'Any day is a good day for a drink with friends! 📅'}</Title>
       <Data>
         <Day>
           <Week>
