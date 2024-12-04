@@ -12,14 +12,14 @@ const paymentRepositoryCreator = ({db}: {db: Firestore}) => ({
   findAllByClient: async (client: string): Promise<Either<Payment[], RuntimeError>> => {
     return Result.Ok(
       (Object.values(JSON.parse(file).payments) as Payment[])
-        .filter((payment: Payment) => payment.client.id === client && payment.time > 1672527600000)
+        .filter((payment: Payment) => payment.client.id === client && payment.time > 1704063600000)
         .sort((a, b) => a.time - b.time)
     );
   },
   findAll: async (): Promise<Either<Payment[], RuntimeError>> => {
     return Result.Ok(
       (Object.values(JSON.parse(file).payments) as Payment[])
-        .filter((payment: Payment) => payment.time > 1672527600000)
+        .filter((payment: Payment) => payment.time > 1704063600000)
         .sort((a, b) => a.time - b.time)
     );
   },

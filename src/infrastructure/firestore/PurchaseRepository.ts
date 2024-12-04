@@ -12,7 +12,7 @@ const purchaseRepositoryCreator = ({db}: {db: Firestore}) => ({
   findAll: async (): Promise<Either<Purchase[], RuntimeError>> => {
     return Result.Ok(
       (Object.values(JSON.parse(file).purchases) as Purchase[])
-        .filter((purchase: Purchase) => purchase.time > 1672527600000)
+        .filter((purchase: Purchase) => purchase.time > 1704063600000)
         .sort((a, b) => a.time - b.time)
     );
   },
@@ -150,7 +150,7 @@ const purchaseRepositoryCreator = ({db}: {db: Firestore}) => ({
 
     return Result.Ok(
       (Object.values(JSON.parse(file).purchases) as Purchase[])
-        .filter((purchase: Purchase) => purchase.client.id === client && purchase.time > 1672527600000)
+        .filter((purchase: Purchase) => purchase.client.id === client && purchase.time > 1704063600000)
         .sort((a, b) => a.time - b.time)
     );
   },
